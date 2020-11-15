@@ -57,5 +57,28 @@ public class APITest {
 			.body("message", CoreMatchers.is("Due date must not be in past"))
 		;
 	}
+	
+	@Test
+	public void deveRemoverTarefaComSucesso() {
+		//inserir tarefa
+		Integer id = RestAssured.given()
+			.body("{ \"task\": \"Tarefa para remoção\", \"dueDate\": \"2020-12-30\" }")
+			.contentType(ContentType.JSON)
+		.when()
+			.post("/todo") //ação de salvar, padrão API rest salva usando o método POST
+		.then()
+			.log().all()
+			.statusCode(201) //recurso que pediu para inserir foi criado
+			.extract().path("id")
+		;
+		
+		//remover tarefa
+		RestAssured.given()
+		.when()
+			.delete("/todo/"+id)//deleta registro com id da tarefa que acabou de inserir acima
+		.then()
+			.statusCode(204)//OK sem conteúdo para informar além disso
+		;
+	}
 }
 
